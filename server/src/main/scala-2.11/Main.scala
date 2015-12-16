@@ -71,23 +71,18 @@ object Main {
   def partitionGrid(width: Int, height: Int, xStepSize: Int, yStepSize: Int): Seq[Seq[(Int, Int)]] = {
     val numHori = Math.ceil((width / xStepSize)).toInt
     val numVert = Math.ceil((height / yStepSize)).toInt
-    for {
+    (for {
       y <- 0 to numVert
       x <- 0 to numHori
     } yield {
       val (xAnchor, yAnchor) = (x * xStepSize, y * yStepSize)
       val fil = miniGridPos(xAnchor, yAnchor, xStepSize, yStepSize)
 
-      val sz = fil.filter { case (_x, _y) => {
+      fil.filter { case (_x, _y) => {
         _x < width && _y < height
       }}
 
-      if (fil.length != sz.length) {
-        println(fil.length, sz.length)
-      }
-
-      sz
-    }
+    }).filter(_ != Nil)
   }
 
   def avgGrid(img: BufferedImage, xStepSize: Int, yStepSize: Int) = {
