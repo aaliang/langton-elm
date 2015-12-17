@@ -34,9 +34,8 @@ object Main {
     intSeq.map(i => fn(new Color(i)))
   }
 
-  def imgToColourMatrix: (BufferedImage, Color => Colour) => Seq[Colour] = (img, fn) => {
+  def imgToColourMatrix(img: BufferedImage, fn: Color => Colour): Seq[Colour] = {
     toColourMatrix(toRGBMatrix(img), fn)
-    //toColourMatrix _ compose toRGBMatrix
   }
 
   def getXYFunc [T] (seq: Seq[T], width: Int): ((Int, Int)) => T = {
