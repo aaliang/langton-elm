@@ -30,19 +30,14 @@ object Main {
     }
   }
 
-  def toColourMatrix(intSeq: Seq[Int]): Seq[Colour] = {
-    intSeq.map(i => {
-      val col = new Color(i)
-      Colour(
-        col.getRed,
-        col.getGreen,
-        col.getBlue
-      )
-    })
+  def toColourMatrix(intSeq: Seq[Int], fn: Color => Colour ): Seq[Colour] = {
+    intSeq.map(i => fn(new Color(i)))
   }
 
-  def imgToColourMatrix: (BufferedImage) => Seq[Colour] =
-    toColourMatrix _ compose toRGBMatrix
+  def imgToColourMatrix: (BufferedImage, Color => Colour) => Seq[Colour] = (img, fn) => {
+    toColourMatrix(toRGBMatrix(img), fn)
+    //toColourMatrix _ compose toRGBMatrix
+  }
 
   def getXYFunc [T] (seq: Seq[T], width: Int): ((Int, Int)) => T = {
     (tup: (Int, Int)) => seq(tup._1 + tup._2*width)
@@ -85,8 +80,8 @@ object Main {
     }).filter(_ != Nil)
   }
 
-  def avgGrid(img: BufferedImage, xStepSize: Int, yStepSize: Int) = {
-    val colourMatrix = imgToColourMatrix(img)
+  def avgGrid(img: BufferedImage, xStepSize: Int, yStepSize: Int, fn: Color => Colour) = {
+    val colourMatrix = imgToColourMatrix(img, fn)
     val getColourAt = getXYFunc(colourMatrix, img.getWidth)
     partitionGrid(img.getWidth, img.getHeight, xStepSize, yStepSize).map { pos =>
       avgSequence(pos.map(getColourAt))
@@ -118,13 +113,16 @@ object Main {
     //do nothing
   }
 
-  def test (path: String, w: Int, h: Int): Unit = {
+  def test (path: String, w: Int, h: Int, fn: Color => Colour): Unit = {
     val img = Main.loadImage(path)
     println(img.get.getWidth)
     println(img.get.getHeight)
-    val a = Main.avgGrid(img.get, w, h)
+    val a = Main.avgGrid(img.get, w, h, fn)
     Main.writeImage(a, "out.jpg", img.get.getWidth, img.get.getHeight, w, h)
 
   }
 
+  def defaultTransform(color: Color) = {
+    Colour(color.getRed, color.getGreen, color.getBlue)
+  }
 }
