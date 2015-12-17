@@ -91,7 +91,6 @@ object Main {
     val numBlocksPerRow = Math.ceil(width.toFloat/stepSizeX).toInt
     val numBlocksPerCol = Math.ceil(height.toFloat/stepSizeY).toInt
     val img = new BufferedImage(numBlocksPerRow*stepSizeX, numBlocksPerCol*stepSizeY, BufferedImage.TYPE_3BYTE_BGR)
-//    println(numBlocksPerRow)
     for ((e, i) <- cs.view.zipWithIndex) {
       val c = new Color(e.red, e.green, e.blue)
       val xAnchor = i % numBlocksPerRow
@@ -108,11 +107,7 @@ object Main {
     ImageIO.write(img, "png",  new File(path))
   }
 
-  def main(args: Array[String]) {
-    //do nothing
-  }
-
-  def test (path: String, w: Int, h: Int, fn: Color => Colour): Unit = {
+  def transform (path: String, w: Int, h: Int, fn: Color => Colour = defaultColorTransform): Unit = {
     val img = Main.loadImage(path)
     println(img.get.getWidth)
     println(img.get.getHeight)
@@ -121,7 +116,7 @@ object Main {
 
   }
 
-  def defaultTransform(color: Color) = {
+  def defaultColorTransform(color: Color) = {
     Colour(color.getRed, color.getGreen, color.getBlue)
   }
 }
